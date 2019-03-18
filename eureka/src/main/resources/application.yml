@@ -1,0 +1,35 @@
+# 单机版
+server:
+  port: 9000
+
+spring:
+  application:
+    name: eureka
+  security:
+    user:
+      name: eureka
+      password: 123456
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://eureka:123456@${spring.cloud.client.ip-address}:${server.port}/eureka/
+  instance:
+    metadata-map:
+      user.name: ${spring.security.user.name}
+      user.password: ${spring.security.user.password}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS
+
+info:
+  name: ${spring.application.name}
+  version : 0.5

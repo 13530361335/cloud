@@ -1,0 +1,54 @@
+server:
+  port: 9001
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka:123456@${spring.cloud.client.ip-address}:9000/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+    status-page-url-path: /actuator
+    metadata-map:
+      user.name: ${spring.security.user.name}
+      user.password: ${spring.security.user.password}
+
+spring:
+  application:
+    name: gateway
+  security:
+    user:
+      name: gateway
+      password: 123456
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: host_route
+          uri: http://localhost:9010
+          predicates:
+            - Path=/a/**
+          filters:
+            - StripPrefix=1
+        - id: host_route
+          uri: http://baidu.com
+          predicates:
+            - Path=/b/**
+          filters:
+            - StripPrefix=1
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS
+
+info:
+  name: ${spring.application.name}
+  version : 0.5
+
